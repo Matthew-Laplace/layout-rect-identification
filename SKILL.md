@@ -52,7 +52,7 @@ description: Read and identify rectangles of ANY layer (or a layer set) in a Vir
 
 ## 1. 读取
 
-- 目标写成完整三级标识 `library/cell/view` + **图层名**，写进报告；用户可能正在看**另一个 cell**（实测踩过：窗口标题是 `codex test_only`，而我一直在读 `<lib>/<cellB>`）。
+- 目标写成完整三级标识 `library/cell/view` + **图层名**，写进报告；用户可能正在看**另一个 cell**（实测踩过：窗口标题是 `<lib> <cell>`，而我一直在读 `<lib>/<cellB>`）。
 - 从实例读：`inst~>master~>shapes` 中该图层的 `drawing` 图形，用 `dbTransformBBox(shape~>bBox inst~>transform)` 换算到顶层绝对坐标；顶层自身的图形直接取 `cv~>shapes`。
 - **遍历深度 ≤ 2**。再深会产生**幻影矩形**：实测深度 ≤5 时出现 6 条 `x` 为负、4 条亚微米偏移的假副本（变换合成错误）。
 - **用实例 bbox 过滤**：任何超出 `inst~>bBox` 的矩形一律判为采集错误并丢弃。这条判据每次先跑。
