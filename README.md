@@ -115,3 +115,7 @@ Show only what was identified.
 内部の辺を消したい場合は Virtuoso のネイティブ機能を使う：
 `Edit → Basic → Merge`（`Shift-m`）、`leMergeShapes`、`dbLayerOr`。読み取り専用なら
 `Display → Merge Shapes`（`mergeEnable`）。詳細は [docs/native-merge.md](docs/native-merge.md)。
+
+## License
+
+MIT — see [LICENSE](LICENSE).
