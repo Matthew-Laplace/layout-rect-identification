@@ -24,17 +24,17 @@ Identification is not "copy the shapes out". It is dimensionality reduction:
 | one cell, with inward extension | 10 rects | 4 rects, union area unchanged | A |
 | one cell | 11 rects | 1 union region (142 outline segments) | B |
 
-## The four rules
+## The three rules
 
 1. **Exact duplicates** (identical edge coordinates, 1e-3 µm tolerance): identify one.
 2. **True subset** (A completely inside B, both axes): identify the larger one only.
    One axis is not enough — that is a partial overlap, and both stay.
-3. **Partial overlap**: extend the edge that lies inside the neighbour to the neighbour's
-   boundary — **only when the swept strip stays inside the neighbour**, so the union does
-   not change and no shape is added. The opposite direction is forbidden: it would grow the
-   union, which is adding geometry, not identifying it.
-4. **Nothing else changes.** No classification, no new, deleted or trimmed geometry.
-   Identification does not save the cellview.
+3. **Everything else is identified as is.** No classification, no new, deleted or trimmed
+   geometry, and the cellview is not saved.
+
+Internal edges inside an overlap are **not** our job. Virtuoso already does it:
+`Edit → Basic → Merge` (**Shift-m**), `leMergeShapes(list(fig…))`, `dbLayerOr(cvId …)`,
+and `Display → Merge Shapes` (`mergeEnable`) which only changes the display.
 
 ## Reading the layout
 
