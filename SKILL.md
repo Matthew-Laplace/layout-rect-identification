@@ -20,6 +20,18 @@ description: Read and identify rectangles of ANY layer (or a layer set) in a Vir
 - 要**修改**（移动、删除、延长、回填 OA）→ 用 **A**。并集没有可编辑的矩形边界，改不了；必须逐条拿到矩形坐标。
 - 典型流程：**先用 B 读并集**（定性 + 拿到并集面积作为不变量），**再切 A 拿矩形**去改，改完用并集面积复核（必须与改前相等，除非用户要求改变面积）。
 
+### 原生并集通道（IC6.1.8 文档已核，省掉自己写并集算法）
+
+| 通道 | 命令 / 菜单 | 性质 | 用途 |
+|---|---|---|---|
+| 交互合并 | **Edit → Basic → Merge**，快捷键 **`Shift-m`**（2026-10-12 用户实测可用）| **改数据** | 同层对象合并成一个（也支持 blockage；不支持 P&R 与 snap boundary 对象；默认跳过 via，选项默认 `t`）|
+| SKILL 合并 | `leMergeShapes( list(fig1 fig2 fig3) )` | **改数据** | 对指定图形做并集 |
+| 层布尔 | `dbLayerOr(cvId …)`，同类还有 `dbLayerAnd / dbLayerAndNot / dbLayerXor / dbLayerSize / dbLayerHoles / dbLayerNoHoles / dbLayerEnclose / dbLayerTile` | **改数据**（返回新图形）| **整层提取并集**最快路径 |
+| 只读显示 | **Display → Merge Shapes**（Display Abstraction Controls，环境变量 **`mergeEnable`**，Scope: Pcells / Except current / All）| **只改显示**（"hiding all the extra edges"）| 方法 B 的"快速阅读"：不改数据就让重叠看起来合并 |
+
+文档出处（本地镜像 `IC618/doc`，release `IC_06.18.030_lnx86`，注册库 `IC6.18`；同样内容也在 Obsidian 知识库 `<vault>/Raw/<converted>/` 的 IC618 转换稿里，转换稿更好搜）：`vlehelp`（Merge 命令、`Shift-m`、Merge Shapes/`mergeEnable`）、`sklayoutref/layout.html`（`leMergeShapes`）、`skdfref`（`dbLayer*`）。
+注意：前三条会**创建/修改 OA 对象**，属于修改而不是识别；用之前必须有明确的写授权。文档证据不等于 live 会话已具备这些命令。
+
 - 两法必须给出**相同的并集面积**（差 < 1e-6），这是互相校验的判据：先用 A 的矩形算并集面积，再用 B 的轮廓算一遍，两者不等即报错停止。
 - 选择不明时按 A 并询问；用户说"只提并集"就只给 B，不要附赠矩形清单。
 - B 允许出现孔洞（内部空洞）—— 外轮廓 + 孔洞一起报，孔洞面积从并集面积里扣除。
@@ -40,7 +52,7 @@ description: Read and identify rectangles of ANY layer (or a layer set) in a Vir
 
 ## 1. 读取
 
-- 目标写成完整三级标识 `library/cell/view` + **图层名**，写进报告；用户可能正在看**另一个 cell**（实测踩过：窗口标题是 `<lib> <cell>`，而我一直在读 the other cell）。
+- 目标写成完整三级标识 `library/cell/view` + **图层名**，写进报告；用户可能正在看**另一个 cell**（实测踩过：窗口标题是 `codex test_only`，而我一直在读 `<lib>/<cellB>`）。
 - 从实例读：`inst~>master~>shapes` 中该图层的 `drawing` 图形，用 `dbTransformBBox(shape~>bBox inst~>transform)` 换算到顶层绝对坐标；顶层自身的图形直接取 `cv~>shapes`。
 - **遍历深度 ≤ 2**。再深会产生**幻影矩形**：实测深度 ≤5 时出现 6 条 `x` 为负、4 条亚微米偏移的假副本（变换合成错误）。
 - **用实例 bbox 过滤**：任何超出 `inst~>bBox` 的矩形一律判为采集错误并丢弃。这条判据每次先跑。
