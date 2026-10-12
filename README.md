@@ -24,6 +24,12 @@ Identification is not "copy the shapes out". It is dimensionality reduction:
 | one cell, with inward extension | 10 rects | 4 rects, union area unchanged | A |
 | one cell | 11 rects | 1 union region (142 outline segments) | B |
 
+## Native merge commands
+
+See [docs/native-merge.md](docs/native-merge.md) for the four native union channels
+(`Edit → Basic → Merge` / `Shift-m`, `leMergeShapes`, `dbLayerOr`,
+`Display → Merge Shapes` / `mergeEnable`) with manual citations.
+
 ## The three rules
 
 1. **Exact duplicates** (identical edge coordinates, 1e-3 µm tolerance): identify one.
